@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-kzh!hif=1)b7kpd2ski3w&f1gx&2jcr3i4l(qfm9z=_=3ace51'
+SECRET_KEY = 'your_settings_secret_key'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -64,8 +64,8 @@ ROOT_URLCONF = 'online_store.urls'
 
 WEBSITE_URL = 'http://127.0.0.1:8000/'
 
-STRIPE_PUB_KEY = 'pk_test_51MRQV1JbsATzEynJNVty8u6r2skduvnbio1lk5miOd7ygDKxpKkYV4erLn1SpwMPAZHF78U9tWbFSw5ecX3WwNyU00wpuSUeFm'
-STRIPE_SECRET_KEY = 'sk_test_51MRQV1JbsATzEynJ5mlk3fSZnzBOokQPkshZxZkv66d848y8FiccSfYAvhtFbIg34NfYyfypAvgGjBryntfE7yUk00WQeYSbmX'
+STRIPE_PUB_KEY = 'your_stripe_pub_key'
+STRIPE_SECRET_KEY = 'your_stripe_secret_key'
 
 TEMPLATES = [
     {
