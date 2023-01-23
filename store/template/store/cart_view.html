@@ -1,0 +1,105 @@
+{% extends 'online_site/base.html' %}
+{% block title %}
+Cart_View
+{% endblock %}
+{% load static %}
+
+{% block content %}
+
+    <!-- Breadcrumb Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-12">
+                <nav class="breadcrumb bg-light mb-30">
+                    <a class="breadcrumb-item text-dark" href="{% url 'index' %}">Home</a>
+                    <a class="breadcrumb-item text-dark" href="{% url 'shop' %}">Shop</a>
+                    <span class="breadcrumb-item active">Shopping Cart</span>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+
+    <!-- Cart Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-lg-8 table-responsive mb-5">
+                <table class="table table-light table-borderless table-hover text-center mb-0">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Products</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody class="align-middle">
+                     {% if cart|length %}
+                     {% for item in cart %}
+                        <tr>
+                            <td class="align-middle"><img src="{{ item.product.get_thumbnail }}" alt="" style="width: 50px;">{{ item.product.title }}</td>
+                            <td class="align-middle">${{ item.product.get_display_price }}</td>
+                            <td class="align-middle">
+                                <div class="input-group quantity mx-auto" style="width: 110px; height: 40px;">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-sm btn-primary btn-minus" >
+                                        <a href="{% url 'change_quantity' item.product.id %}?action=decrease" class="fa fa-minus"></a>
+                                        </button>
+                                    </div>
+                                    <input type="text" class="form-control form-control-sm bg-secondary border-0 text-center" value="1" >
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-sm btn-primary btn-plus">
+                                            <a href="{% url 'change_quantity' item.product.id %}?action=increase" class="fa fa-plus"></a>
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </td>
+                            <td class="align-middle">${{ item.product.get_display_price }}</td>
+                           <td class="align-middle"><a href="{% url 'remove_from_cart' item.product.id %}" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></a></td>
+                        </tr>
+                     {% endfor %}
+                     {% else %}
+                     <div class="notification" class="row px-xl-5">
+                         You don't have any products in the cart yet.......
+                     </div>
+                     {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-lg-4">
+                <form class="mb-30" action="">
+                    <div class="input-group">
+                        <input type="text" class="form-control border-0 p-4" placeholder="Coupon Code">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary">Apply Coupon</button>
+                        </div>
+                    </div>
+                </form>
+                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Cart Summary</span></h5>
+                <div class="bg-light p-30 mb-5">
+                    <div class="border-bottom pb-2">
+                        <div class="d-flex justify-content-between mb-3">
+                            <h6>Subtotal</h6>
+                            <h6>${{ cart.get_total_cost}}</h6>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <div class="d-flex justify-content-between mt-2">
+                            <h5>Total</h5>
+                            <h5>${{ cart.get_total_cost }}</h5>
+                        </div>
+                        <a href="{% url 'checkout' %}" class="btn btn-block btn-primary font-weight-bold my-3 py-3">Proceed To Checkout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Cart End -->
+
+
+
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'online_site/base.html' %}
+{% block title %}
+{{ title }}
+{% endblock %}
+{% load static %}
+
+{% block content %}
+
+
+    <h3>{{ title }}</h3>
+    <form method="post" action="." enctype="multipart/form-data" class="space-y-5">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button class="btn btn-primary">Submit</button>
+    </form>
+
+    {% if product %}
+        <a href="{% url 'delete_product' product.id %}" class="btn btn-primary">Delete product</a>
+    {% endif %}
+{% endblock %}

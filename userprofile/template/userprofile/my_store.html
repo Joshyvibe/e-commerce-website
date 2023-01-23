@@ -1,0 +1,79 @@
+{% extends 'online_site/base.html' %}
+{% block title %}
+My store
+{% endblock %}
+{% load static %}
+
+{% block content %}
+
+
+    <h3>My Orders</h3>
+    <table class="table table-light table-borderless table-hover text-center mb-0">
+        <thead class="thead-dark">
+            <tr>
+                <th>Order ID</th>
+                <th>Title</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        {% for order_item in order_items %}
+            <tbody class="align-middle">
+                <tr>
+                    <td  class="align-middle">
+                        <div class="input-group quantity mx-auto">
+                            <a href="{% url 'my_store_order_detail' order_item.order.id %}">{{ order_item.order.id }}</a>
+                        </div>
+                    </td>
+                    <td class="align-middle">{{ order_item.product.title }}</td>
+                    <td class="align-middle"> {{ order_item.quantity }}</td>
+                    <td class="align-middle"> ${{ order_item.get_display_price }}</td>
+                </tr>
+            </tbody>
+        {% endfor %}
+    </table>
+
+    <hr>
+    <h3>My store</h3>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="text-center py-4">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <a href="{% url 'add_product' %}" class="btn btn-primary">Add products</a>
+    {% if products %}
+         <div class="container-fluid pt-5 pb-3">
+            <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondaryy pr-3">My Products</span></h2>
+            <div class="d-flex align-items-center justify-content-center mt-2">
+                {% for product in products %}
+                    <div class="flex-fill pl-3">
+                        <div class="product-item bg-light mb-4">
+                            <a href="{% url 'product_detail' product.category.slug product.slug %}">
+                                {% if product.image %}
+                                    <div class="product-img position-relative overflow-hidden">
+                                        <img class="img-fluid w-100" src="{{ product.image.url }}" alt="Image of {{ product.title }}">
+                                        <div class="product-action">
+                                            <a class="btn btn-outline" href="{% url 'edit_product' product.id %}">Edit product</a>
+                                            <a class="btn btn-outline" href="{% url 'product_detail' product.category.slug product.slug %}">View product detail</a>
+
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <h6 class="d-flex align-items-center mb-4">{{ product.title }}</h6>
+                                <p class="text-xs text-gray-600">${{product.get_display_price}}</p>
+
+                                <hr class="my-3">
+                                <p><strong>Status: </strong>{{ product.get_status_display }}</p>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        <p class="mt-4 py-4 px-8 bg-gray-200">You don't have any products yet....</p>
+    {% endif %}
+{% endblock %}

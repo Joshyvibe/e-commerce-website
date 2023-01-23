@@ -1,0 +1,12 @@
+{% extends 'online_site/base.html' %}
+{% block title %}
+Myaccount
+{% endblock %}
+{% load static %}
+
+{% block content %}
+
+
+<h3>Myaccount</h3>
+<a href="{% url 'logout' %}" class="btn btn-primary">Log out</a>
+{% endblock %}

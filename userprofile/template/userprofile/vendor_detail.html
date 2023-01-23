@@ -1,0 +1,36 @@
+{% extends 'online_site/base.html' %}
+{% block title %}
+{% firstof user.get_full_name user.username %}
+{% endblock %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+
+<h3>{% firstof user.get_full_name user.username %}</h3>
+ <div class="d-flex align-items-center justify-content-center mt-2">
+    {% for product in products %}
+        <div class="flex-fill pl-3">
+            <div class="product-item bg-light mb-4">
+                <a href="{% url 'product_detail' product.category.slug product.slug %}">
+                     {% if product.image %}
+                        <div class="product-img position-relative overflow-hidden">
+                            <img class="img-fluid w-100" src="{{ product.image.url }}" alt="Image of {{ product.title }}">
+                            <div class="product-action">
+                                <a class="btn btn-outline-dark btn-square" href="{% url 'product_detail' product.category.slug product.slug %}"><i class="fa fa-shopping-cart"></i></a>
+                                <a class="btn btn-outline-dark btn-square" href=""><i class="far fa-heart"></i></a>
+                                <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-sync-alt"></i></a>
+                                <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-search"></i></a>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <h6 class="d-flex align-items-center mb-4">{{ product.title }}</h6>
+                    <p class="text-xs text-gray-600">${{product.get_display_price}}</p>
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
+
+

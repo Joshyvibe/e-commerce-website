@@ -1,0 +1,202 @@
+{% extends 'online_site/base.html' %}
+{% block title %}
+Checkout
+{% endblock %}
+{% load static %}
+
+{% block content %}
+
+    <!-- Breadcrumb Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-12">
+                <nav class="breadcrumb bg-light mb-30">
+                    <a class="breadcrumb-item text-dark" href="#">Home</a>
+                    <a class="breadcrumb-item text-dark" href="#">Shop</a>
+                    <span class="breadcrumb-item active">Checkout</span>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+
+    <!-- Checkout Start -->
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-lg-8">
+                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Billing Address</span></h5>
+                <div class="bg-light p-30 mb-5">
+                    {{ form.as_p }}
+                    <div id="errors" class="hidden my-3 navbar-nav mr-auto px-8 py-0 rounded-xl text-white"></div>
+                    <button class="btn btn-block btn-primary font-weight-bold py-3 rounded-xl" onclick="buy(event)">Checkout</button>
+                </div>
+
+            </div>
+            <div class="col-lg-4">
+                <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Order Total</span></h5>
+                <div class="bg-light p-30 mb-5">
+                    <div class="border-bottom">
+                        <h6 class="mb-3">Product</h6>
+                        <div class="d-flex justify-content-between">
+                            <p>{{ item.product.title }}</p>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <div class="d-flex justify-content-between mt-2">
+                            <h5>Total</h5>
+                            <h5>${{ cart.get_total_cost }}</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-5">
+                    <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Payment</span></h5>
+                    <div class="bg-light p-30">
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" name="payment" id="paypal">
+                                <label class="custom-control-label" for="paypal">Paypal</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" name="payment" id="directcheck">
+                                <label class="custom-control-label" for="directcheck">Direct Check</label>
+                            </div>
+                        </div>
+                        <div class="form-group mb-4">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" name="payment" id="banktransfer">
+                                <label class="custom-control-label" for="banktransfer">Bank Transfer</label>
+                            </div>
+                        </div>
+                        <button class="btn btn-block btn-primary font-weight-bold py-3" onclick="buy(event)">Place Order</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Checkout End -->
+    {% block scripts %}
+    <head>
+        <script src="https://js.stripe.com/v3/"></script>
+    </head>
+    <script>
+        function validate(first_name, last_name, email, mobile, address, country, city, state, zipcode) {
+            let errors = [];
+
+            if (first_name == '') {
+                errors.push('The first name is missing');
+            }
+
+            if (last_name == '') {
+                errors.push('The last name is missing');
+            }
+
+            if (email == '') {
+                errors.push('The email is missing');
+            }
+
+            if (mobile == '') {
+                errors.push('The mobile No is missing');
+            }
+
+            if (address == '') {
+                errors.push('The address is missing');
+            }
+
+            if (country == '') {
+                errors.push('The country is missing');
+            }
+
+            if (city == '') {
+                errors.push('The city is missing');
+            }
+
+            if (state == '') {
+                errors.push('The state is missing');
+            }
+
+            if (zipcode == '') {
+                errors.push('The zipcode is missing');
+            }
+
+            let html = '';
+
+            for (let i = 0; i < errors.length; i++) {
+               html += errors[i] + '<br>';
+            }
+
+            let errorsElement = document.getElementById('errors');
+
+            if (errors.length) {
+                errorsElement.classList.remove('hidden');
+                errorsElement.innerHTML = html;
+                return false;
+            } else {
+                errorsElement.classList.add('hidden');
+                return true;
+            }
+        }
+
+        function buy(event) {
+            event.preventDefault();
+
+            const first_name = document.getElementById('id_first_name').value;
+            const last_name = document.getElementById('id_last_name').value;
+            const email = document.getElementById('id_email').value;
+            const mobile = document.getElementById('id_mobile').value;
+            const address = document.getElementById('id_address').value;
+            const country = document.getElementById('id_country').value;
+            const city = document.getElementById('id_city').value;
+            const state = document.getElementById('id_state').value;
+            const zipcode = document.getElementById('id_zipcode').value;
+
+            if (validate(first_name, last_name, email, mobile, address, country, city, state, zipcode)) {
+
+
+                let data = {
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'email': email,
+                    'mobile': mobile,
+                    'address': address,
+                    'country': country,
+                    'city': city,
+                    'state': state,
+                    'zipcode': zipcode,
+                }
+
+
+                let stripe = Stripe('{{ pub_key }}');
+
+                fetch('/cart/checkout/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify(data)
+                })
+                .then(function(response) {
+                    return response.json()
+                })
+                .then(function(session) {
+                    return stripe.redirectToCheckout({ sessionId: session.session.id })
+                })
+                .then(function(result) {
+                    if (result.error) {
+                        alert(result.error.message)
+                    }
+                })
+                .catch(function(error) {
+                    alert(error)
+                });
+            }
+            return false;
+        }
+    </script>
+    {% endblock %}
+
+{% endblock content %}</title>
